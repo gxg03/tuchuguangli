@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+    <title>智图云阅 - 图书借阅管理系统</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app-container" id="app">
+    <!-- 登录注册视图 -->
+    <div id="authView" class="auth-wrapper">
+        <div class="auth-card">
+            <div class="auth-title">📚 智图云阅</div>
+            <div class="auth-sub">登录 或 注册 开启借阅之旅</div>
+            <div id="loginForm">
+                <div class="input-group"><label>用户名</label><input type="text" id="loginUsername" placeholder="请输入用户名"></div>
+                <div class="input-group"><label>密码</label><input type="password" id="loginPassword" placeholder="密码"></div>
+                <button class="btn btn-primary" id="doLoginBtn">登录</button>
+                <div class="switch-text">没有账号？<span class="switch-link" id="showRegBtn">立即注册</span></div>
+            </div>
+            <div id="regForm" style="display:none;">
+                <div class="input-group"><label>用户名</label><input type="text" id="regUsername" placeholder="3~12位字母数字"></div>
+                <div class="input-group"><label>密码</label><input type="password" id="regPassword" placeholder="至少6位"></div>
+                <div class="input-group"><label>确认密码</label><input type="password" id="regConfirmPwd"></div>
+                <button class="btn btn-primary" id="doRegBtn">注册</button>
+                <div class="switch-text">已有账号？<span class="switch-link" id="showLoginBtn">返回登录</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主界面（登录后） -->
+    <div id="mainView" class="main-dashboard">
+        <div class="navbar">
+            <div class="logo">📖 智图云阅 · 图书管理系统</div>
+            <div class="user-info"><span class="user-avatar" id="userAvatarIcon">👤</span><span id="currentUserSpan"></span><button class="logout-btn" id="logoutBtn">退出</button></div>
+        </div>
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="booksTab">📚 图书列表</button>
+            <button class="tab-btn" data-tab="borrowTab">📋 我的借阅</button>
+        </div>
+        <!-- 图书列表面板 -->
+        <div id="booksPanel" class="panel active-panel">
+            <div class="search-bar">
+                <input type="text" id="searchTitle" class="search-input" placeholder="书名">
+                <input type="text" id="searchAuthor" class="search-input" placeholder="作者">
+                <select id="searchCategory" class="search-select"><option value="">全部分类</option></select>
+                <button class="search-btn" id="searchBtn">🔍 筛选</button>
+                <button class="search-btn" id="resetSearchBtn" style="background:#94a3b8;">重置</button>
+            </div>
+            <div id="booksContainer" class="books-grid"></div>
+            <div id="paginationContainer" class="pagination"></div>
+        </div>
+        <!-- 个人借阅记录面板 -->
+        <div id="borrowPanel" class="panel">
+            <div class="records-table">
+                <table>
+                    <thead><tr><th>图书名称</th><th>借阅日期</th><th>应还日期</th><th>状态</th><th>操作</th></tr></thead>
+                    <tbody id="borrowRecordsTbody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="modal" class="modal"><div class="modal-content" id="modalContent"></div></div>
+<div id="toastMsg" class="toast-msg"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
