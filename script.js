@@ -241,10 +241,13 @@ function switchTab(tabId) {
         document.getElementById("booksPanel").classList.add("active-panel");
         document.querySelector("[data-tab='booksTab']").classList.add("active");
         filterBooks();
-    } else {
+    } else if(tabId === "borrowTab") {
         document.getElementById("borrowPanel").classList.add("active-panel");
         document.querySelector("[data-tab='borrowTab']").classList.add("active");
         renderBorrowRecords();
+    } else if(tabId === "addBookTab") {
+        document.getElementById("addBookPanel").classList.add("active-panel");
+        document.querySelector("[data-tab='addBookTab']").classList.add("active");
     }
 }
 
@@ -311,4 +314,67 @@ document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".tab-btn").forEach(btn=>btn.addEventListener("click",(e)=>switchTab(btn.dataset.tab)));
     document.getElementById("searchBtn")?.addEventListener("click",filterBooks);
     document.getElementById("resetSearchBtn")?.addEventListener("click",()=>{ document.getElementById("searchTitle").value=""; document.getElementById("searchAuthor").value=""; document.getElementById("searchCategory").value=""; filterBooks(); });
+    // 添加图书相关事件
+    document.getElementById("submitAddBook")?.addEventListener("click", submitAddBook);
+    document.getElementById("resetAddBook")?.addEventListener("click", resetAddBookForm);
+    document.getElementById("addBookTotal")?.addEventListener("change", syncAvailableCount);
 });
+
+// ---------- 添加图书相关 ----------
+function syncAvailableCount() {
+    const total = parseInt(document.getElementById("addBookTotal").value) || 0;
+    const available = parseInt(document.getElementById("addBookAvailable").value) || 0;
+    if(available > total) {
+        document.getElementById("addBookAvailable").value = total;
+    }
+}
+
+function submitAddBook() {
+    const title = document.getElementById("addBookTitle").value.trim();
+    const author = document.getElementById("addBookAuthor").value.trim();
+    const category = document.getElementById("addBookCategory").value || "其他";
+    const icon = document.getElementById("addBookIcon").value || "📚";
+    const total = parseInt(document.getElementById("addBookTotal").value) || 0;
+    const available = parseInt(document.getElementById("addBookAvailable").value) || 0;
+    const desc = document.getElementById("addBookDesc").value.trim();
+
+    // 表单验证
+    if(!title) { showToast("请输入图书名称", true); return; }
+    if(!author) { showToast("请输入作者名称", true); return; }
+    if(total <= 0 || total > 100) { showToast("总数量需在1-100之间", true); return; }
+    if(available < 0 || available > total) { showToast("可借数量需在0到总数量之间", true); return; }
+
+    // 创建新图书
+    const books = getBooks();
+    const newId = books.length > 0 ? Math.max(...books.map(b => b.id)) + 1 : 1;
+    const newBook = {
+        id: newId,
+        title: title,
+        author: author,
+        category: category,
+        available: available,
+        total: total,
+        coverIcon: icon,
+        description: desc
+    };
+
+    books.push(newBook);
+    saveBooks(books);
+    showToast(`《${title}》添加成功！`);
+    
+    // 更新分类下拉列表
+    fillCategoryOptions();
+    
+    // 重置表单
+    resetAddBookForm();
+}
+
+function resetAddBookForm() {
+    document.getElementById("addBookTitle").value = "";
+    document.getElementById("addBookAuthor").value = "";
+    document.getElementById("addBookCategory").value = "";
+    document.getElementById("addBookIcon").value = "📚";
+    document.getElementById("addBookTotal").value = "1";
+    document.getElementById("addBookAvailable").value = "1";
+    document.getElementById("addBookDesc").value = "";
+}
